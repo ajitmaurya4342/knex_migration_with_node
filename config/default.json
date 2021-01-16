@@ -1,0 +1,10 @@
+{
+  "dbURI": "postgres://atslmjci:8Mof-ZXtdCivFYLjR6AvstMgy3LXOKn5@drona.db.elephantsql.com:5432/atslmjci",
+  "secretAccessKey": "+ODosrvsS4IPVH4MIOeo2Eoy6bpL0OmiMLHrVsv0",
+  "accessKeyId": "AKIAZBNIUTCYJ5PNW25W",
+  "region": "ap-south-1",
+  "ACL": "public-read",
+  "user": "anantarnav007@gmail.com",
+  "pass": "AnantSAwasthy",
+  "bucket": "mm-blog-community"
+}

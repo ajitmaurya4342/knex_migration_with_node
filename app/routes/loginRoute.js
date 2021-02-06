@@ -13,7 +13,7 @@ const login_controller = require("@/controllers/login_controller");
 
 router
     .route("/login") //Need SessionID, SeatIDs
-    .get(login_controller.loginPage);
+    .post(login_controller.loginPage);
 
 
 module.exports = router;

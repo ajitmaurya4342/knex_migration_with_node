@@ -1,3 +1,5 @@
+
+require('module-alias/register')
 const express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
@@ -5,19 +7,14 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const knex = require("./config/database");
 const _ws = require("ws").Server;
-const pagination = require("./pagination").pagination;
+const pagination = require("@/lib/pagination").pagination;
 const http = require("http");
 
 app.use(bodyParser.json());
 
 
-app.get("/", async (req, res) => {
 
-let knexQuery=await knex("acos").paginate(pagination(10, 1));   
-res.send(knexQuery)
- 
-});
-
+require('@/routes/')(app);
 
 var tm = [];
 

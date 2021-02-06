@@ -4,24 +4,24 @@ module.exports = {
 
   development: {
     client: 'mysql',
-    connection:{
-            host: 'localhost',
-            database: 'shops',
-            password: '',
-            user: 'root'
-        },
-        migrations: {
-            tableName: 'knex_migrations'
-          }
+    connection: {
+      host: 'localhost',
+      database: 'shops',
+      password: '',
+      user: 'root'
+    },
+    migrations: {
+      tableName: 'knex_migrations'
+    }
   },
 
   staging: {
     client: 'postgresql',
     connection: {
-        host: 'localhost',
-            database: 'shops',
-            password: '',
-            user: 'root'
+      host: 'localhost',
+      database: 'shops',
+      password: '',
+      user: 'root'
     },
     pool: {
       min: 2,
@@ -36,7 +36,7 @@ module.exports = {
     client: 'postgresql',
     connection: {
       database: 'my_db',
-      user:     'username',
+      user: 'username',
       password: 'password'
     },
     pool: {

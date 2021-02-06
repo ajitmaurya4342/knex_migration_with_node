@@ -6,8 +6,8 @@ module.exports = {
     client: 'mysql',
     connection: {
       host: 'localhost',
-      database: 'shops',
-      password: '',
+      database: 'quiz_app',
+      password: 'root',
       user: 'root'
     },
     migrations: {

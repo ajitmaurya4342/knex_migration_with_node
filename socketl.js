@@ -122,10 +122,10 @@ ser.on('connection', (ws, req) => {
         //send message to all
         for (c of ser.clients) {
             c.send(JSON.stringify({
-                    name: ws.personName,
-                    data: _d.data
-                }))
-                // if(ws !== c){
+                name: ws.personName,
+                data: _d.data
+            }))
+            // if(ws !== c){
 
             // }
         }

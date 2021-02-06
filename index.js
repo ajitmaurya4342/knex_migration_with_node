@@ -10,6 +10,8 @@ const _ws = require("ws").Server;
 const pagination = require("@/lib/pagination").pagination;
 const http = require("http");
 
+global.knexCon = knex
+
 app.use(bodyParser.json());
 
 

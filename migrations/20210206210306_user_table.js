@@ -5,6 +5,8 @@ exports.up = async function (knex) {
         table.increments("user_id").primary();
         table.string("user_name", 45);
         table.text("user_image");
+        table.integer("user_points");
+        table.text("uuid");
         table.enu("user_type", ["0", "1"]);//admin for 1 , o for user
         table.enu("user_is_active", ["0", "1"]);//l for active 
         table.integer("created_by").defaultTo();

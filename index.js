@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const knex = require("./config/database");
 const _ws = require("ws").Server;
-const pagination = require("@/lib/pagination").pagination;
+
 const http = require("http");
 
 global.knexCon = knex

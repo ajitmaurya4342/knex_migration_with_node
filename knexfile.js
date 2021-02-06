@@ -7,7 +7,7 @@ module.exports = {
     connection: {
       host: 'localhost',
       database: 'quiz_app',
-      password: '',
+      password: 'root',
       user: 'root'
     },
     migrations: {

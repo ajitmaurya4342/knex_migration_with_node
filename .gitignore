@@ -1,6 +1,7 @@
 # Node build artifacts
 node_modules
 npm-debug.log
+knexfile.js
 
 # Local development
 *.env
@@ -10,3 +11,4 @@ npm-debug.log
 # Docker
 Dockerfile
 docker-compose.yml
+

@@ -1,5 +1,4 @@
-
-require('module-alias/register')
+require("module-alias/register");
 const express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
@@ -7,16 +6,17 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 const knex = require("./config/database");
 const _ws = require("ws").Server;
+var cors = require("cors");
+
+app.use(cors());
 
 const http = require("http");
 
-global.knexCon = knex
+global.knexCon = knex;
 
 app.use(bodyParser.json());
 
-
-
-require('@/routes/')(app);
+require("@/routes/")(app);
 
 var tm = [];
 
@@ -24,7 +24,7 @@ var _total = 0;
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-    console.log(`the server is running on ${PORT} and date is ${new Date()}`);
+  console.log(`the server is running on ${PORT} and date is ${new Date()}`);
 });
 //     // AA
 //     // BB
@@ -67,7 +67,6 @@ server.listen(PORT, () => {
 //                     "'";
 //                 db.query(sql2).then((response) => {
 
-
 //                     // console.log(response);
 //                     ws.send(
 //                         JSON.stringify({
@@ -76,8 +75,6 @@ server.listen(PORT, () => {
 //                         })
 //                     );
 //                 });
-
-
 
 //                 let sql23 =
 //                     "Update  chat_details set msg_status=2 where to_id='" +
@@ -135,7 +132,6 @@ server.listen(PORT, () => {
 //             ws["userId"] = _d.data.id;
 //             ws["screenType"] = _d.data.screenType;
 
-
 //             if (_d.data.screenType == "Home") {
 //                 let sql2 = "update chat_user set isOnline=1 where id=" + _d.data.id;
 //                 db.query(sql2).then((response) => {
@@ -154,7 +150,6 @@ server.listen(PORT, () => {
 //                     });
 //                 });
 //             }
-
 
 //             if (_d.data.screenType == "Chat") {
 //                 let sql233 =
@@ -317,7 +312,5 @@ server.listen(PORT, () => {
 //     ++_total;
 //     console.log("One more client connected " + _total);
 // });
-
-
 
 //app.listen(PORT, () => console.log(`Listening on ${PORT}`));

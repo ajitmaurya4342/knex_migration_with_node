@@ -12,7 +12,7 @@ module.exports.login = async (req, res) => {
             user_name: req.body.user_name,
             user_type: "1",
             user_is_active: "1"
-        }).then(response => {
+        }).orWhere({ uuid: req.body.user_name }).then(response => {
 
             if (response.length > 0) {
                 res.send({
@@ -415,6 +415,7 @@ module.exports.addScore = async (req, res) => {
 module.exports.addEditUser = async (req, res) => {
     let reqbody = req.body
     let validateArray = ["user_name", "user_image", "uuid"];
+    let MsgError = ["Please enter user name", "Please select profile image", ""]
 
     let responseError = await CheckValidation(validateArray, reqbody);
     if (responseError.status) {
@@ -427,6 +428,8 @@ module.exports.addEditUser = async (req, res) => {
             user_is_active: "1",
             user_points: 500
         }
+
+
 
         if (reqbody.user_id) {
 
@@ -446,31 +449,55 @@ module.exports.addEditUser = async (req, res) => {
             })
 
         } else {
-            global.knexCon("m_user").insert(obj).then(response => {
+
+            global.knexCon("m_user").where({
+                uuid: req.body.uuid,
+            }).then(response => {
+
                 if (response.length > 0) {
-                    obj["user_id"] = response[0]
-                    res.send({
-                        status: true, "Record": obj, msg: "Inserted Succesfully",
+                    return res.send({
+                        status: false, "Record": response, "msg": "Already Exists"
                     })
                 } else {
-                    res.send({
-                        status: false, "Record": response, "msg": "something Went wrong",
+
+                    global.knexCon("m_user").insert(obj).then(response => {
+                        if (response.length > 0) {
+                            obj["user_id"] = response[0]
+                            res.send({
+                                status: true, "Record": obj, msg: "Profile Created Succesfully",
+                            })
+                        } else {
+                            res.send({
+                                status: false, "Record": response, "msg": "something Went wrong",
+                            })
+                        }
+
+                    }).catch(err => {
+
+                        res.send({
+                            status: false, "Record": err
+                        })
+
                     })
+
                 }
 
             }).catch(err => {
 
-                res.send({
+                return res.send({
                     status: false, "Record": err
                 })
 
             })
 
 
+
         }
 
     } else {
-        res.send(responseError)
+        let indexCheck = responseError.msgIndex;
+        responseError["msg"] = MsgError[indexCheck];
+        res.send(responseError);
 
     }
     // console.log("dsfdsf")

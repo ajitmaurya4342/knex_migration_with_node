@@ -169,6 +169,7 @@ module.exports.getLevelList = async (req, res) => {
     let limit = req.query.limit ? req.query.limit : 100;
     let currentPage = req.query.currentPage ? req.query.currentPage : 1;
 
+
     global.knexCon("m_level").select("m_level.*", "m_game.game_name").select(global.knexCon.raw(`group_concat(question_id) as question_id`)).join("m_game", "m_level.game_id", "=", "m_game.game_id")
         .leftJoin("m_level_link_question", "m_level.level_id", "=", "m_level_link_question.level_id").where((builder) => {
 
@@ -179,14 +180,34 @@ module.exports.getLevelList = async (req, res) => {
             response.data.map(x => {
                 x["question_id"] = x.question_id ? x.question_id.split(",") : []
             });
+
+
+            if (response.data.length == 1) {
+                global.knexCon("m_questions").whereIn("question_id", response.data[0].question_id).then(res33 => {
+                    res33.map(y => {
+                        y["UserAnswer"] = ""
+                    })
+
+                    res.send({
+                        status: true, "Record": response, msg: "Question Array", questionArray: res33
+                    })
+
+                })
+
+
+
+            } else {
+                res.send({
+                    status: true, "Record": response, msg: "Inserted S2uccesfully",
+                })
+
+            }
             // if (response.length > 0) {
-            res.send({
-                status: true, "Record": response, msg: "Inserted Succesfully",
-            })
+
 
 
         }).catch(err => {
-
+            console.log(err);
             res.send({
                 status: false, "Record": err
             })
@@ -528,6 +549,25 @@ module.exports.getuserlist = async (req, res) => {
             status: false, "Record": err
         })
 
+    })
+
+}
+
+//app api 
+
+module.exports.getLevelByGame = async (req, res) => {
+
+    let game_level = await global.knexCon("m_level").where((builder) => {
+
+        if (req.query.game_id) {
+            builder.where({ game_id: req.query.game_id });
+        }
+    });
+
+    let user_level = await global.knexCon("user_level_score").select("m_level.level").join("m_level", "m_level.level_id", "=", "user_level_score.level_id").where({ "user_level_score.user_id": req.query.user_id, "score_is_active": "1", game_id: req.query.game_id }).orderBy(" m_level.level").limit(1);
+
+    res.send({
+        status: true, "Record": game_level, msg: "Game Level", current_user_level: user_level.length > 0 ? user_level[0].level + 1 : 1
     })
 
 }

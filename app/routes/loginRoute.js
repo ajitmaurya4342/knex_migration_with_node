@@ -40,5 +40,9 @@ router
 router
     .route("/addScore") //Need SessionID, SeatIDs
     .post(login_controller.addScore);
+/////
+router
+    .route("/level-list-by-game") //Need SessionID, SeatIDs
+    .get(login_controller.getLevelByGame);
 
 module.exports = router;

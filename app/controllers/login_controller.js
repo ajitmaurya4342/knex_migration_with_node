@@ -86,8 +86,8 @@ module.exports.addEditGameLevelId = async (req, res) => {
         .where({ level_id: reqbody.level_id })
         .then((response) => {
           level_id_new = reqbody.level_id;
-          if (reqbody.question_array.length > 0) {
-            linkLevel(level_id_new, reqbody.question_array).then(
+          if (reqbody.question_id.length > 0) {
+            linkLevel(level_id_new, reqbody.question_id).then(
               (response1) => {
                 res.send({
                   status: true,

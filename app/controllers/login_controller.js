@@ -178,7 +178,8 @@ module.exports.getLevelList = async (req, res) => {
             }
         }).groupBy("m_level.level_id").paginate(pagination(limit, currentPage)).then(response => {
             response.data.map(x => {
-                x["question_id"] = x.question_id ? x.question_id.split(",") : []
+                x["question_id"] = x.question_id ? x.question_id.split(",") : [];
+                x["total_question"] = x["question_id"].length
             });
 
 

@@ -283,14 +283,18 @@ module.exports.addEditQuestion = async (req, res) => {
 
 module.exports.getQuestionList = async (req, res) => {
 
-    let limit = req.query.limit ? req.query.limit : 100;
+    let limit = req.query.limit ? req.query.limit : 10000;
     let currentPage = req.query.currentPage ? req.query.currentPage : 1;
 
 
-    global.knexCon("m_questions").where((builder) => {
 
+    global.knexCon("m_questions").select("m_questions.*", "m_level_link_question.level_q_id", "m_level.level", "m_game.game_name").leftJoin("m_level_link_question", "m_level_link_question.question_id", "=", "m_questions.question_id").leftJoin("m_level", "m_level_link_question.level_id", "=", "m_level.level_id").leftJoin("m_game", "m_game.game_id", "=", "m_level.game_id").where((builder) => {
         if (req.query.question_id) {
             builder.where({ question_id: req.query.question_id })
+        }
+
+        if (req.query.isUnique) {
+            builder.whereRaw(`m_level.game_id is NULL `)
         }
     }).paginate(pagination(limit, currentPage)).then(response => {
         // if (response.length > 0) {

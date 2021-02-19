@@ -45,4 +45,8 @@ router
     .route("/level-list-by-game") //Need SessionID, SeatIDs
     .get(login_controller.getLevelByGame);
 
+/////
+router
+    .route("/getLeaderBoard") //Need SessionID, SeatIDs
+    .get(login_controller.getLeaderBoard);
 module.exports = router;

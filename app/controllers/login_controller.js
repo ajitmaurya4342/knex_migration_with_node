@@ -359,11 +359,76 @@ module.exports.getQuestionList = async (req, res) => {
     });
 };
 
+module.exports.getLeaderBoard = async (req, res) => {
+
+  // select SUM(user_level_score.level_score)*10,m_user.user_id,m_user.user_name,m_user.user_image from user_level_score inner join  m_user on m_user.user_id=user_level_score.user_id where score_is_active=1 group by m_user.user_id;
+
+  let limit = req.query.limit ? req.query.limit : 100;
+  let currentPage = req.query.currentPage ? req.query.currentPage : 1;
+  let Filter = ""
+  if (req.query.game_id) {
+    Filter = ` and game_id=${req.query.game_id}`;
+
+  }
+  let UserPoint = await global.knexCon.raw(`select SUM(user_level_score.level_score)*10 as total_score from user_level_score
+  left join m_level on m_level.level_id=user_level_score.level_id
+   where user_id = ${req.query.user_id} and score_is_active='1'  ${Filter}`);
+  let UserRank = "-";
+
+  if (UserPoint[0][0].total_score) {
+    UserRank = await global.knexCon.raw(`select count(*) as rank from user_level_score 
+    left join m_level on m_level.level_id=user_level_score.level_id
+    where score_is_active = "1" ${Filter} group by user_level_score.user_id  Having(SUM(user_level_score.level_score) * 10) > ${UserPoint[0][0].total_score};
+    `);
+
+    // if (UserRank[0].length > 0) {
+    UserRank = UserRank[0].length + 1;
+
+    // }
+
+  }
+
+  global
+    .knexCon("user_level_score").join("m_user", "m_user.user_id", "=", "user_level_score.user_id").leftJoin("m_level", "m_level.level_id", "=", "user_level_score.level_id")
+    .where((builder) => {
+      if (req.query.game_id) {
+        builder.where({ "m_level.game_id": req.query.game_id });
+      }
+
+      builder.where({ score_is_active: "1", })
+    })
+    .andWhereRaw(`m_user.user_id != ${req.query.user_id} `)
+    .select(global.knexCon.raw(`SUM(user_level_score.level_score) * 10 as score, m_user.user_id, m_user.user_name, m_user.user_image`))
+    .groupBy("user_level_score.user_id")
+    .orderByRaw(`(SUM(user_level_score.level_score) * 10) DESC`)
+    .paginate(pagination(limit, currentPage))
+    .then((response) => {
+
+      res.send({
+        status: true,
+        Record: response,
+        UserRank: UserRank,
+        UserPoint: UserPoint[0][0].total_score ? UserPoint[0][0].total_score : 0,
+        msg: "Inserted Succesfully",
+
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send({
+        status: false,
+        Record: err,
+      });
+    });
+
+
+}
+
 //Game Api
 module.exports.getGameList = async (req, res) => {
   let limit = req.query.limit ? req.query.limit : 100;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
-
+  let arrayNew = [{ game_id: "", game_name: "All" }];
   global
     .knexCon("m_game")
     .where((builder) => {
@@ -373,14 +438,28 @@ module.exports.getGameList = async (req, res) => {
     })
     .paginate(pagination(limit, currentPage))
     .then((response) => {
+
+      response.data.map(x => {
+        if (x.game_id != 4) {
+          let obj = {
+            game_name: x.game_name.split(" ")[0],
+            game_id: x.game_id
+          }
+          arrayNew.push(obj);
+        }
+
+      })
       // if (response.length > 0) {
       res.send({
         status: true,
         Record: response,
         msg: "Inserted Succesfully",
+        LeaderBoard: arrayNew
+
       });
     })
     .catch((err) => {
+      console.log(err);
       res.send({
         status: false,
         Record: err,
@@ -666,8 +745,8 @@ module.exports.getuserlist = async (req, res) => {
 
 module.exports.getLevelByGame = async (req, res) => {
   let game_level = await global.knexCon
-    .raw(`select m_level.*,level_score,if(level_score is null,0,(level_score/level_out_of)*100) as percentage from m_level left join user_level_score on user_level_score.level_id=m_level.level_id and user_level_score.score_is_active='1' and user_level_score.user_id="${req.query.user_id}" where game_id=${req.query.game_id}
-    `);
+    .raw(`select m_level.*, level_score,if (level_score is null, 0, (level_score / level_out_of) * 100) as percentage from m_level left join user_level_score on user_level_score.level_id = m_level.level_id and user_level_score.score_is_active = '1' and user_level_score.user_id = "${req.query.user_id}" where game_id = ${req.query.game_id}
+  `);
 
   let user_level = await global
     .knexCon("user_level_score")

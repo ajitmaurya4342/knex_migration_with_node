@@ -87,15 +87,13 @@ module.exports.addEditGameLevelId = async (req, res) => {
         .then((response) => {
           level_id_new = reqbody.level_id;
           if (reqbody.question_id.length > 0) {
-            linkLevel(level_id_new, reqbody.question_id).then(
-              (response1) => {
-                res.send({
-                  status: true,
-                  Record: obj,
-                  msg: "Updated Succesfully",
-                });
-              }
-            );
+            linkLevel(level_id_new, reqbody.question_id).then((response1) => {
+              res.send({
+                status: true,
+                Record: obj,
+                msg: "Updated Succesfully",
+              });
+            });
           } else {
             res.send({
               status: true,
@@ -171,7 +169,7 @@ module.exports.addEditGameLevelId = async (req, res) => {
 };
 
 module.exports.getLevelList = async (req, res) => {
-  let limit = req.query.limit ? req.query.limit : 100;
+  let limit = req.query.limit ? req.query.limit : 1000;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
 
   global
@@ -334,10 +332,10 @@ module.exports.getQuestionList = async (req, res) => {
     .leftJoin("m_game", "m_game.game_id", "=", "m_level.game_id")
     .where((builder) => {
       if (req.query.question_id) {
-        builder.where({ question_id: req.query.question_id });
+        builder.where({ "m_questions.question_id": req.query.question_id });
       }
       if (req.query.question_type) {
-        builder.where({ question_type: req.query.question_type });
+        builder.where({ "m_questions.question_type": req.query.question_type });
       }
 
       if (req.query.isUnique) {
@@ -637,7 +635,7 @@ module.exports.addEditUser = async (req, res) => {
 };
 
 module.exports.getuserlist = async (req, res) => {
-  let limit = req.query.limit ? req.query.limit : 100;
+  let limit = req.query.limit ? req.query.limit : 1000;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
 
   global

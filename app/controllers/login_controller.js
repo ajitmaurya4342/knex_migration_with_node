@@ -363,23 +363,29 @@ module.exports.getLeaderBoard = async (req, res) => {
 
   // select SUM(user_level_score.level_score)*10,m_user.user_id,m_user.user_name,m_user.user_image from user_level_score inner join  m_user on m_user.user_id=user_level_score.user_id where score_is_active=1 group by m_user.user_id;
 
-  let limit = req.query.limit ? req.query.limit : 100;
+  let limit = req.query.limit ? req.query.limit : 200;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
   let Filter = ""
   if (req.query.game_id) {
     Filter = ` and game_id=${req.query.game_id}`;
 
   }
-  let UserPoint = await global.knexCon.raw(`select SUM(user_level_score.level_score)*10 as total_score from user_level_score
+  let UserPoint = await global.knexCon.raw(`select SUM(user_level_score.level_score) as total_score from user_level_score
   left join m_level on m_level.level_id=user_level_score.level_id
    where user_id = ${req.query.user_id} and score_is_active='1'  ${Filter}`);
-  let UserRank = "-";
+  let UserRank = "";
 
   if (UserPoint[0][0].total_score) {
-    UserRank = await global.knexCon.raw(`select count(*) as rank from user_level_score 
-    left join m_level on m_level.level_id=user_level_score.level_id
-    where score_is_active = "1" ${Filter} group by user_level_score.user_id  Having(SUM(user_level_score.level_score) * 10) > ${UserPoint[0][0].total_score};
-    `);
+    // UserRank = await global.knexCon.raw(`select count(*) as rank from user_level_score 
+    // left join m_level on m_level.level_id=user_level_score.level_id
+    // where score_is_active = "1" ${Filter} group by user_level_score.user_id  Having(SUM(user_level_score.level_score) * 10) > ${UserPoint[0][0].total_score};
+    // `);
+
+    UserRank = await global.knexCon.raw(`select m_user.user_id, m_user.user_image,m_user.user_name,(select SUM(level_score) 
+    from user_level_score where user_id = m_user.user_id and score_is_active='1') as score, 
+    group_concat(Distinct m_user.user_id) as user_id2,group_concat(Distinct m_user.user_image) as user_image2,
+    group_concat(Distinct m_user.user_name) as user_name2 from m_user
+    inner join user_level_score on m_user.user_id = user_level_score.user_id left join m_level on m_level.level_id = user_level_score.level_id where score_is_active = '1' ${Filter}  group by score having score> ${UserPoint[0][0].total_score}`)
 
     // if (UserRank[0].length > 0) {
     UserRank = UserRank[0].length + 1;
@@ -388,8 +394,11 @@ module.exports.getLeaderBoard = async (req, res) => {
 
   }
 
+
+  // select from m_user inner join user_level_score on m_user.user_id = user_level_score.user_id group by total_score order by total_score DESC;
+
   global
-    .knexCon("user_level_score").join("m_user", "m_user.user_id", "=", "user_level_score.user_id").leftJoin("m_level", "m_level.level_id", "=", "user_level_score.level_id")
+    .knexCon("m_user").join("user_level_score", "m_user.user_id", "=", "user_level_score.user_id").leftJoin("m_level", "m_level.level_id", "=", "user_level_score.level_id")
     .where((builder) => {
       if (req.query.game_id) {
         builder.where({ "m_level.game_id": req.query.game_id });
@@ -397,16 +406,57 @@ module.exports.getLeaderBoard = async (req, res) => {
 
       builder.where({ score_is_active: "1", })
     })
-    .andWhereRaw(`m_user.user_id != ${req.query.user_id} `)
-    .select(global.knexCon.raw(`SUM(user_level_score.level_score) * 10 as score, m_user.user_id, m_user.user_name, m_user.user_image`))
-    .groupBy("user_level_score.user_id")
-    .orderByRaw(`(SUM(user_level_score.level_score) * 10) DESC`)
+    // .andWhereRaw(`m_user.user_id != ${req.query.user_id} `)
+    // .select(global.knexCon.raw(`SUM(user_level_score.level_score) * 10 as score, m_user.user_id, m_user.user_name, m_user.user_image`))
+    .select(global.knexCon.raw(`m_user.user_id, m_user.user_image,m_user.user_name,(select SUM(level_score)  from user_level_score where user_id = m_user.user_id) as score, group_concat(Distinct m_user.user_id) as user_id2,group_concat(Distinct m_user.user_image) as user_image2,group_concat(Distinct m_user.user_name) as user_name2`))
+    .groupBy("score")
+    .orderByRaw(`score DESC`)
     .paginate(pagination(limit, currentPage))
     .then((response) => {
+      let pointArray = 0;
+      let array_user_rank = 0;
+      let NewResponseArray = [];
+      let indexOfNew = [];
+      response.data.map((x, index) => {
+
+        x["totalonThisRank"] = x.user_id2.split(",");
+        x['total_on_rank'] = x["totalonThisRank"].length;
+
+        let findIndexNew = x["totalonThisRank"].indexOf(req.query.user_id.toString());
+
+        if (x["totalonThisRank"].length == 1 && x.user_id == req.query.user_id) {
+          UserRank = index + 1;
+        } else if (findIndexNew >= 0) {
+          UserRank = index + 1;
+          x["Rank"] = index + 1;
+          NewResponseArray.push(x)
+          if (x.user_id == req.query.user_id) {
+            let UserImageArray = x.user_image2.split(",");
+            if (UserImageArray.length > 1) {
+              x["user_image"] = UserImageArray[0] == x.user_image ? UserImageArray[1] : UserImageArray[0]
+            }
+            let UsernameArray = x.user_name2.split(",");
+            if (UsernameArray.length > 1) {
+              x["user_name"] = UsernameArray[0] == x.user_name ? UsernameArray[1] : UsernameArray[0]
+            }
+            let UserIdArray = x.user_id2.split(",");
+            if (UserIdArray.length > 1) {
+              console.log(UserIdArray, UsernameArray, UserImageArray);
+              x["user_id"] = UserIdArray[0] == req.query.user_id ? UserIdArray[1] : UserIdArray[0]
+            }
+
+          }
+        } else {
+          x["Rank"] = index + 1;
+          NewResponseArray.push(x)
+
+        }
+
+      })
 
       res.send({
         status: true,
-        Record: response,
+        Record: { data: NewResponseArray },
         UserRank: UserRank,
         UserPoint: UserPoint[0][0].total_score ? UserPoint[0][0].total_score : 0,
         msg: "Inserted Succesfully",

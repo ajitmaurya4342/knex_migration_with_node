@@ -3,12 +3,12 @@
 module.exports = {
 
   development: {
-    client: 'mysql',
+    client: 'mysql2',
     connection: {
-      host: 'localhost',
-      database: 'quiz_app',
-      password: 'root',
-      user: 'root'
+      host: "65.0.110.222",
+      database: "quiz",
+      password: "Ajit6649$$",
+      user: "ajit1",
     },
     migrations: {
       tableName: 'knex_migrations'

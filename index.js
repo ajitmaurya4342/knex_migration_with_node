@@ -8,9 +8,12 @@ const knex = require("./config/database");
 const _ws = require("ws").Server;
 var cors = require("cors");
 
+var request = require('request');
+
 app.use(cors());
 
 const http = require("http");
+const c = require("config");
 
 global.knexCon = knex;
 
@@ -22,6 +25,42 @@ var tm = [];
 
 var _total = 0;
 const server = http.createServer(app);
+
+setInterval(x => {
+  // console.log("fsfsd");
+
+  knex.raw("update m_user set user_points=user_points+200").then(res => {
+    knex("m_user").then(res => {
+
+      res.map(x => {
+        if (x.token) {
+          var options = {
+            'method': 'POST',
+            'url': 'https://fcm.googleapis.com/fcm/send',
+            'headers': {
+              'Authorization': 'key=AAAAR-bLrp8:APA91bH2SWwdpBiFykrnQIBzMzUEpHEGM5HHWi5sU-mTO2ZkCISv6QPVq-f_O95GRIWvrgYkhRmL2jz-iZe3iKGJ1pA74Jkq_unSmV-gd4NfASe6K3H45zsuRjAHxoQAz6ktrJU9-Zt9',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "to": x.token, "collapse_key": "type_a", "notification": { "body": `${x.user_name} you earned 200 points`, "title": "Bonus Point" }, "data": { "body": "Body of Your Notification in Data", "title": "Title of Your Notification in Title", "key_1": "Value for key_1", "key_2": "Value for key_2" } })
+
+          };
+
+
+
+          request(options, function (error, response) {
+            if (error) throw new Error(error);
+            console.log(response.body);
+          });
+
+        }
+      })
+
+    }).catch(err => {
+
+    })
+
+  })
+}, 30000)
 
 server.listen(PORT, () => {
   console.log(`the server is running on ${PORT} and date is ${new Date()}`);

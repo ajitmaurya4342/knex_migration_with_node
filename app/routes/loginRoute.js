@@ -21,6 +21,10 @@ router
     .post(login_controller.addEditQuestion);
 
 router
+    .route("/tokenUpdate") //Need SessionID, SeatIDs
+    .post(login_controller.addEditUserToken);
+
+router
     .route("/questionlist") //Need SessionID, SeatIDs
     .get(login_controller.getQuestionList);
 

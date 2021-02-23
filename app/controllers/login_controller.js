@@ -504,8 +504,9 @@ module.exports.getGameList = async (req, res) => {
         status: true,
         Record: response,
         msg: "Inserted Succesfully",
-        LeaderBoard: arrayNew
-
+        LeaderBoard: arrayNew,
+        shareUrl: 'https://www.figma.com/file/BVhnYL2qNQyyBRC0RQk39K/MyCinema.world-(Sanath)?node-id=0%3A1',
+        instruction: ["1. Each Game Need 10 points", "2. Clear Level 10 out of 15"]
       });
     })
     .catch((err) => {
@@ -673,6 +674,43 @@ module.exports.addScore = async (req, res) => {
 
 ///USER API
 
+module.exports.addEditUserToken = async (req, res) => {
+  let reqbody = req.body;
+  let validateArray = ["token"];
+  // let MsgError = ["Please enter user name", "Please select profile image", ""];
+
+  let responseError = await CheckValidation(validateArray, reqbody);
+  if (responseError.status) {
+    let obj = {
+      token: reqbody.token
+    };
+    if (reqbody.user_id) {
+      global
+        .knexCon("m_user")
+        .update(obj)
+        .where({ user_id: reqbody.user_id })
+        .then((response) => {
+          res.send({
+            status: true,
+            Record: obj,
+            msg: "Updated Succesfully",
+          });
+        })
+        .catch((err) => {
+          res.send({
+            status: false,
+            Record: err,
+          });
+        });
+    }
+  } else {
+    let indexCheck = responseError.msgIndex;
+    responseError["msg"] = MsgError[indexCheck];
+    res.send(responseError);
+  }
+  // console.log("dsfdsf")
+};
+
 module.exports.addEditUser = async (req, res) => {
   let reqbody = req.body;
   let validateArray = ["user_name", "user_image", "uuid"];
@@ -688,7 +726,6 @@ module.exports.addEditUser = async (req, res) => {
       user_is_active: "1",
       user_points: 500,
     };
-
     if (reqbody.user_id) {
       global
         .knexCon("m_user")

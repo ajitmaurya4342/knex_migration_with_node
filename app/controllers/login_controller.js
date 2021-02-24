@@ -726,7 +726,6 @@ module.exports.addEditUser = async (req, res) => {
       user_type: "0",
       uuid: reqbody.uuid,
       user_is_active: "1",
-      user_points: 500,
     };
     if (reqbody.user_id) {
       global
@@ -760,6 +759,7 @@ module.exports.addEditUser = async (req, res) => {
               msg: "Already Exists",
             });
           } else {
+            obj["user_points"] = 500;
             global
               .knexCon("m_user")
               .insert(obj)

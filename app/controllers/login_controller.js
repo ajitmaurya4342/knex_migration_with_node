@@ -6,6 +6,7 @@ module.exports.login = async (req, res) => {
   let reqbody = req.body;
   let validateArray = ["user_name"];
   let responseError = await CheckValidation(validateArray, reqbody);
+  let globalSettings = await global.knexCon("settings");
   if (responseError.status) {
     global
       .knexCon("m_user")
@@ -21,6 +22,7 @@ module.exports.login = async (req, res) => {
             status: true,
             Record: response,
             msg: "Success",
+            setting: globalSettings
           });
         } else {
           res.send({

@@ -244,6 +244,7 @@ module.exports.addEditQuestion = async (req, res) => {
     "question",
     "question_type",
     "options",
+    "question_new",
     "correct_options",
     "question_is_active",
   ];
@@ -253,6 +254,7 @@ module.exports.addEditQuestion = async (req, res) => {
     let obj = {
       question_type: reqbody.question_type,
       question: reqbody.question,
+      question_new: reqbody.question_new,
       options: reqbody.options,
       correct_options: reqbody.correct_options,
       question_is_active: reqbody.question_is_active,

@@ -29,6 +29,7 @@ module.exports.login = async (req, res) => {
             status: false,
             Record: response,
             msg: "Invalid Credential",
+            setting: globalSettings
           });
         }
       })
@@ -36,6 +37,7 @@ module.exports.login = async (req, res) => {
         res.send({
           status: false,
           Record: err,
+          setting: globalSettings
         });
       });
   } else {

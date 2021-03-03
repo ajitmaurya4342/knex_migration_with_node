@@ -724,6 +724,9 @@ module.exports.addTransactionDetail = async (req, res) => {
 
   let responseError = await CheckValidation(validateArray, reqbody);
   if (responseError.status) {
+    let UserArray = await global
+      .knexCon("m_user")
+      .where({ user_id: reqbody.user_id });
     var options = {
       'method': 'GET',
       'url': 'https://api.razorpay.com/v1/payments/' + reqbody.payment_id,
@@ -733,33 +736,35 @@ module.exports.addTransactionDetail = async (req, res) => {
     };
     request(options, function (error, response) {
       if (error) throw new Error(error);
-      // console.log(JSON.parse(response.body).id);
-      if (JSON.parse(response.body).error_reason) {
+      if (JSON.parse(response.body).error_reason == null) {
         let obj = {
           user_id: reqbody.user_id,
           amount: reqbody.amount,
           payment_detail: reqbody.payment_detail,
           point: reqbody.point,
           payment_id: reqbody.payment_id,
+
         };
         if (reqbody.user_id) {
           global
             .knexCon("transaction_detail")
             .insert(obj)
-            .where({ user_id: reqbody.user_id })
             .then((response) => {
 
-              console.log(`update m_user set user_points=user_points+${parseInt(reqbody.point)} where user_id=${reqbody.user_id}`);
+
 
               global
-                .knexCon.raw(`update m_user set user_points=user_points+${parseInt(reqbody.point)} where user_id=${reqbody.user_id}`).then(res => {
+                .knexCon.raw(`update m_user set user_points=user_points+${parseInt(reqbody.point)} where user_id=${reqbody.user_id}`).then(res33 => {
+                  UserArray[0].user_points = parseInt(reqbody.point) + parseInt(UserArray[0].user_points)
                   res.send({
                     status: true,
                     Record: obj,
+                    UserArray: UserArray,
                     msg: "Inserted Succesfully",
                   });
 
                 }).catch(errr => {
+
 
                 })
 

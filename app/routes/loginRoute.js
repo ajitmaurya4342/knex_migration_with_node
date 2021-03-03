@@ -53,4 +53,8 @@ router
 router
     .route("/getLeaderBoard") //Need SessionID, SeatIDs
     .get(login_controller.getLeaderBoard);
+/////
+router
+    .route("/transaction_detail") //Need SessionID, SeatIDs
+    .post(login_controller.addTransactionDetail);
 module.exports = router;

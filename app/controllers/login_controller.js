@@ -1,6 +1,7 @@
 const { response } = require("express");
 const CheckValidation = require("@/lib/CheckValidation").checkValidation;
 const pagination = require("@/lib/pagination").pagination;
+var request = require('request');
 
 module.exports.login = async (req, res) => {
   let reqbody = req.body;
@@ -712,6 +713,77 @@ module.exports.addEditUserToken = async (req, res) => {
   } else {
     let indexCheck = responseError.msgIndex;
     responseError["msg"] = MsgError[indexCheck];
+    res.send(responseError);
+  }
+  // console.log("dsfdsf")
+};
+
+module.exports.addTransactionDetail = async (req, res) => {
+  let reqbody = req.body;
+  let validateArray = ["user_id", "amount", "point", "payment_detail", "payment_id"];
+
+  let responseError = await CheckValidation(validateArray, reqbody);
+  if (responseError.status) {
+    var options = {
+      'method': 'GET',
+      'url': 'https://api.razorpay.com/v1/payments/' + reqbody.payment_id,
+      'headers': {
+        'Authorization': 'Basic cnpwX3Rlc3RfOURHV2hsUTdaemJaY3c6VmJVOXQ0YWFTR2FxS0huZ2tLWmtBUEQy'
+      }
+    };
+    request(options, function (error, response) {
+      if (error) throw new Error(error);
+      // console.log(JSON.parse(response.body).id);
+      if (JSON.parse(response.body).error_reason) {
+        let obj = {
+          user_id: reqbody.user_id,
+          amount: reqbody.amount,
+          payment_detail: reqbody.payment_detail,
+          point: reqbody.point,
+          payment_id: reqbody.payment_id,
+        };
+        if (reqbody.user_id) {
+          global
+            .knexCon("transaction_detail")
+            .insert(obj)
+            .where({ user_id: reqbody.user_id })
+            .then((response) => {
+
+              console.log(`update m_user set user_points=user_points+${parseInt(reqbody.point)} where user_id=${reqbody.user_id}`);
+
+              global
+                .knexCon.raw(`update m_user set user_points=user_points+${parseInt(reqbody.point)} where user_id=${reqbody.user_id}`).then(res => {
+                  res.send({
+                    status: true,
+                    Record: obj,
+                    msg: "Inserted Succesfully",
+                  });
+
+                }).catch(errr => {
+
+                })
+
+            })
+            .catch((err) => {
+              res.send({
+                status: false,
+                Record: err,
+              });
+            });
+        }
+
+      } else {
+        res.send({
+          status: false,
+          Record: "Payment Failed",
+        });
+
+      }
+
+
+    });
+
+  } else {
     res.send(responseError);
   }
   // console.log("dsfdsf")

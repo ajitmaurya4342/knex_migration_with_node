@@ -9,7 +9,6 @@ const _ws = require("ws").Server;
 var cors = require("cors");
 
 var request = require('request');
-
 app.use(cors());
 
 const http = require("http");
@@ -60,7 +59,7 @@ setInterval(x => {
     })
 
   })
-}, 1000 * 60 * 240)
+}, 1000 * 60 * 720)
 
 server.listen(PORT, () => {
   console.log(`the server is running on ${PORT} and date is ${new Date()}`);

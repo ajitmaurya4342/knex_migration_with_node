@@ -513,7 +513,15 @@ module.exports.getGameList = async (req, res) => {
         msg: "Inserted Succesfully",
         LeaderBoard: arrayNew,
         shareUrl: 'https://www.figma.com/file/BVhnYL2qNQyyBRC0RQk39K/MyCinema.world-(Sanath)?node-id=0%3A1',
-        instruction: ["1. Each Game Need 10 points", "2. Clear Level 10 out of 15"]
+        instruction: ["1. Each Game Need 10 points", "2. Clear Level 10 out of 15"],
+        paymentArray: [
+          { id: 1, iconName: 'cubes', description: '500 coins', amount: "10", amountIcon: "inr", point: 500 },
+          { id: 2, iconName: 'cubes', description: '1000 Coins', amount: "20", amountIcon: "inr", point: 1000 },
+          { id: 3, iconName: 'cubes', description: '2000 Coins', amount: "30", amountIcon: "inr", point: 2000 },
+          { id: 4, iconName: 'cubes', description: '3000 Coins', amount: "40", amountIcon: "inr", point: 3000 },
+
+          // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
+        ]
       });
     })
     .catch((err) => {

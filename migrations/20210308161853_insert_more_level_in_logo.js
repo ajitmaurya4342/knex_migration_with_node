@@ -12,8 +12,8 @@ exports.up = async function (knex) {
     // table.datetime("updated_at").defaultTo(knex.fn.now());
     let arrayGame = []
 
-    for (i = 1; i <= 3; i++) {
-        for (j = 1; j <= 50; j++) {
+    for (i = 1; i <= 1; i++) {
+        for (j = 51; j <= 68; j++) {
             let obj = {
                 game_id: i,
                 level: j,
@@ -22,7 +22,6 @@ exports.up = async function (knex) {
             }
             arrayGame.push(obj)
         }
-
     }
     // console.log(arrayGame)
 

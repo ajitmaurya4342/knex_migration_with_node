@@ -7,6 +7,10 @@ const app = express();
 const knex = require("./config/database");
 const _ws = require("ws").Server;
 var cors = require("cors");
+var async = require("async");
+const readline = require('readline');
+const { google } = require('googleapis');
+
 
 var request = require('request');
 app.use(cors());
@@ -24,6 +28,165 @@ var tm = [];
 
 var _total = 0;
 const server = http.createServer(app);
+
+app.get("/uploadDrive", async (req, res) => {
+
+  setInterval(x => {
+    const fs = require('fs');
+    const readline = require('readline');
+    const { google } = require('googleapis');
+    var request = require('request');
+
+    const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+    const TOKEN_PATH = 'token.json';
+
+    knex("m_questions").where({ is_url_change: "0" }).limit(1).then(all_questions => {
+
+      if (all_questions.length == 0) {
+        console.log("completed")
+        return false
+      }
+
+
+      // console.log(all_questions.length)
+      async.forEachOf(all_questions, function (single_question, index, mainCallback) {
+
+        // console.log(single_question);
+        let option_array = single_question.options.split(",");
+        let image_name = option_array[parseInt(single_question.correct_options)].toLowerCase().replace(" ", "_") + ".png";
+
+        request({
+          url: single_question.question_new,
+          //make the returned body a Buffer
+          encoding: null
+        }, function (error, response, body) {
+
+          //will be true, body is Buffer( http://nodejs.org/api/buffer.html )
+          console.log(body instanceof Buffer);
+
+          //do what you want with body
+          //like writing the buffer to a file
+          fs.writeFile('test2222222.png', body, {
+            encoding: null
+          }, function (err) {
+
+            if (err)
+              throw err;
+            console.log('It\'s saved!');
+
+            fs.readFile('credential.json', (err, content) => {
+              if (err) return console.log('Error loading client secret file:', err);
+
+              authorize(JSON.parse(content), storeFiles)
+            });
+          });
+
+        });
+
+
+        function authorize(credentials, callback) {
+
+          const { client_secret, client_id, redirect_uris } = credentials.web;
+          const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris[0]);
+
+          fs.readFile(TOKEN_PATH, (err, token) => {
+            if (err) {
+              return getAccessToken(oAuth2Client, callback);
+
+            }
+            oAuth2Client.setCredentials(JSON.parse(token));
+            callback(oAuth2Client);
+          });
+        }
+
+
+
+        function getAccessToken(oAuth2Client, callback) {
+          const authUrl = oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES,
+          });
+          console.log('Authorize this app by visiting this url:', authUrl);
+          const rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout,
+          });
+          rl.question('Enter the code from that page here: ', (code) => {
+            rl.close();
+            oAuth2Client.getToken(code, (err, token) => {
+              if (err) return console.error('Error retrieving access token', err);
+              oAuth2Client.setCredentials(token);
+
+              fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+                if (err) return console.error(err);
+              });
+              callback(oAuth2Client);
+            });
+          });
+        }
+
+
+        function storeFiles(auth) {
+          console.log("auth", __dirname);
+          const drive = google.drive({ version: 'v3', auth });
+          var fileMetadata = {
+            'name': image_name
+          };
+          var media = {
+            mimeType: 'image/png',
+            //PATH OF THE FILE FROM YOUR COMPUTER
+            body: fs.createReadStream('D:/ReactAdminPanel/knex_migration_with_node/test2222222.png')
+          };
+          drive.files.create({
+            resource: fileMetadata,
+            media: media,
+            fields: 'id'
+          }, function (err, file) {
+            if (err) {
+              // Handle error
+              console.error(err, "fsdfsdfdsfsdf");
+            } else {
+
+              console.log('File Id: ', file.data.id, single_question);
+              let obj = {
+                new_question_url: single_question.question_new,
+                is_url_change: "1",
+                question_new: "https://drive.google.com/thumbnail?id=" + file.data.id,
+                question: `https://drive.google.com/file/d/${file.data.id}/preview?usp=drive_web`,
+              }
+              console.log(obj)
+              knex("m_questions").update(obj).where({ question_id: single_question.question_id }).then(ressssss => {
+                console.log(ressssss);
+                mainCallback()
+              })
+            }
+          });
+        }
+        // console.log(image_name);
+
+
+      }, function (error) {
+        if (error) {
+
+        }
+
+      })
+    });
+
+  }, 6000000)
+
+  // console.log("fsdfsdfsdf")
+
+
+  // return false
+
+
+
+
+});
+
 
 setInterval(x => {
   // console.log("fsfsd");

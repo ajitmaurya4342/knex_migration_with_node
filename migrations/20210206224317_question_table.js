@@ -4,6 +4,7 @@ exports.up = async function (knex) {
     await knex.schema.createTable("m_questions", (table) => {
         table.increments("question_id").primary();
         table.text("question");
+        table.text("question_new");
         table.string("question_type", 45); //image or text
         table.text("options");//A,b,c
         table.text("correct_options");

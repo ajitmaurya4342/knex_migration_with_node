@@ -9950,9 +9950,9 @@ module.exports.getLevelList = async (req, res) => {
       });
 
       if (response.data.length == 1) {
-        let Limit=15;
-        if(req.query.isDashboard){
-          Limit=20
+        let Limit = 15;
+        if (req.query.isDashboard) {
+          Limit = 20
         }
         global
           .knexCon("m_questions")
@@ -9998,7 +9998,6 @@ module.exports.addEditQuestion = async (req, res) => {
     "question",
     "question_type",
     "options",
-    "question_new",
     "correct_options",
     "question_is_active",
   ];
@@ -10714,7 +10713,7 @@ module.exports.getLevelByGame = async (req, res) => {
     status: true,
     Record: game_level[0],
     msg: "Game Level",
-    current_user_level:50
+    current_user_level: 50
     // current_user_level: user_level.length > 0 ? user_level[0].level + 1 : 1,
   });
 };

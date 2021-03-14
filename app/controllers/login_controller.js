@@ -10153,6 +10153,12 @@ module.exports.getLeaderBoard = async (req, res) => {
     // }
 
   }
+  let idCheck = "";
+  if (
+    req.query.game_id
+  ) {
+    idCheck = ` and mL.game_id=${req.query.game_id}`;
+  }
 
 
   // select from m_user inner join user_level_score on m_user.user_id = user_level_score.user_id group by total_score order by total_score DESC;
@@ -10166,9 +10172,11 @@ module.exports.getLeaderBoard = async (req, res) => {
 
       builder.where({ score_is_active: "1", })
     })
+
+
     // .andWhereRaw(`m_user.user_id != ${req.query.user_id} `)
     // .select(global.knexCon.raw(`SUM(user_level_score.level_score) * 10 as score, m_user.user_id, m_user.user_name, m_user.user_image`))
-    .select(global.knexCon.raw(`m_user.user_id, m_user.user_image,m_user.user_name,(select SUM(level_score)  from user_level_score  inner join m_level mL on  mL.level_id=user_level_score.level_id where user_id = m_user.user_id and score_is_active='1' and mL.game_id=${req.query.game_id}) as score, group_concat(Distinct m_user.user_id) as user_id2,group_concat(Distinct m_user.user_image) as user_image2,group_concat(Distinct m_user.user_name) as user_name2`))
+    .select(global.knexCon.raw(`m_user.user_id, m_user.user_image,m_user.user_name,(select SUM(level_score)  from user_level_score  inner join m_level mL on  mL.level_id=user_level_score.level_id where user_id = m_user.user_id and score_is_active='1' ${idCheck}) as score, group_concat(Distinct m_user.user_id) as user_id2,group_concat(Distinct m_user.user_image) as user_image2,group_concat(Distinct m_user.user_name) as user_name2`))
     .groupBy("score")
     .orderByRaw(`score DESC`)
     .paginate(pagination(limit, currentPage))

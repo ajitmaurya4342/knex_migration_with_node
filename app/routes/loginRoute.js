@@ -31,8 +31,6 @@ router
 router
     .route("/gameList") //Need SessionID, SeatIDs
     .get(login_controller.getGameList);
-
-
 router
     .route("/addEditLevel") //Need SessionID, SeatIDs
     .post(login_controller.addEditGameLevelId);

@@ -10283,6 +10283,13 @@ module.exports.getGameList = async (req, res) => {
           { id: 4, iconName: 'cubes', description: '3000 Coins', amount: "40", amountIcon: "inr", point: 3000 },
 
           // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
+        ],
+        settingData:[
+          { id: 1, iconName: 'surround-sound', description: 'Sound' },
+          { id: 2, iconName: 'rule', description: 'Game Rules' },
+          { id: 3, iconName: 'cubes', description: 'Buy More Coins' },
+      
+          // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
         ]
       });
     })

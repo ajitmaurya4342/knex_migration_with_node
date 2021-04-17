@@ -10253,7 +10253,7 @@ module.exports.getGameList = async (req, res) => {
       if (req.query.game_id) {
         builder.where({ game_id: req.query.game_id });
       }
-      builder.where({ game_is_active:"1" });
+      builder.where({ game_is_active: "1" });
     })
     .paginate(pagination(limit, currentPage))
     .then((response) => {
@@ -10722,7 +10722,7 @@ module.exports.getLevelByGame = async (req, res) => {
     status: true,
     Record: game_level[0],
     msg: "Game Level",
-    current_user_level: 50
-    // current_user_level: user_level.length > 0 ? user_level[0].level + 1 : 1,
+    // current_user_level: 50
+    current_user_level: user_level.length > 0 ? user_level[0].level + 1 : 1,
   });
 };

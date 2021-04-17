@@ -10251,8 +10251,9 @@ module.exports.getGameList = async (req, res) => {
     .knexCon("m_game")
     .where((builder) => {
       if (req.query.game_id) {
-        builder.where({ game_id: req.query.game_id, game_is_active: "Y" });
+        builder.where({ game_id: req.query.game_id });
       }
+      builder.where({ game_is_active:"1" });
     })
     .paginate(pagination(limit, currentPage))
     .then((response) => {

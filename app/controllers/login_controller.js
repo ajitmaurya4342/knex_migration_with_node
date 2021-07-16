@@ -10290,7 +10290,7 @@ module.exports.getGameList = async (req, res) => {
           // { id: 3, iconName: 'cubes', description: 'Buy More Coins' },
 
           // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
-        ]
+        ],
       });
     })
     .catch((err) => {

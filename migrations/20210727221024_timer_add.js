@@ -2,7 +2,7 @@
 exports.up = async function (knex) {
 
     await knex.schema.table("m_level", (table) => {
-        table.integer("timer").defaultTo(20);
+        table.integer("timer").defaultTo(30);
       
     });
 

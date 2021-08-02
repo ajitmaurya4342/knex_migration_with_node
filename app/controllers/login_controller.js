@@ -12081,31 +12081,7 @@ module.exports.login = async (req, res) => {
       title: 'Math333',
       color: '#FFF',
       image: 'https://bootdey.com/img/Content/avatar/avatar8.png',
-    },
-    {
-      id: 5,
-      title: 'Full Form Quiz',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar5.png',
-    },
-    {
-      id: 6,
-      title: 'More',
-      color: '#87CEEB',
-      image: 'https://bootdey.com/img/Content/avatar/avatar6.png',
-    },
-    {
-      id: 1,
-      title: 'Math333',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
-    },
-    {
-      id: 1,
-      title: 'Math333',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar8.png',
-    },
+    }
   ];
   if (responseError.status) {
     global

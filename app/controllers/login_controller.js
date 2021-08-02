@@ -12033,6 +12033,80 @@ module.exports.login = async (req, res) => {
   let validateArray = ["user_name"];
   let responseError = await CheckValidation(validateArray, reqbody);
   let globalSettings = await global.knexCon("settings");
+  const data = [
+    {
+      id: 1,
+      title: 'Math333',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar1.png',
+    },
+    {
+      id: 2,
+      title: 'X & 0',
+      color: '#87CEEB',
+      image: 'https://bootdey.com/img/Content/avatar/avatar2.png',
+    },
+    {
+      id: 3,
+      title: 'Logo Quiz',
+      color: '#87CEEB',
+      image: 'https://bootdey.com/img/Content/avatar/avatar3.png',
+    },
+    {
+      id: 4,
+      title: 'Image Quiz',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar4.png',
+    },
+    {
+      id: 5,
+      title: 'Full Form Quiz',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar5.png',
+    },
+    {
+      id: 6,
+      title: 'More',
+      color: '#87CEEB',
+      image: 'https://bootdey.com/img/Content/avatar/avatar6.png',
+    },
+    {
+      id: 1,
+      title: 'Math333',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
+    },
+    {
+      id: 1,
+      title: 'Math333',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar8.png',
+    },
+    {
+      id: 5,
+      title: 'Full Form Quiz',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar5.png',
+    },
+    {
+      id: 6,
+      title: 'More',
+      color: '#87CEEB',
+      image: 'https://bootdey.com/img/Content/avatar/avatar6.png',
+    },
+    {
+      id: 1,
+      title: 'Math333',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
+    },
+    {
+      id: 1,
+      title: 'Math333',
+      color: '#FFF',
+      image: 'https://bootdey.com/img/Content/avatar/avatar8.png',
+    },
+  ];
   if (responseError.status) {
     global
       .knexCon("m_user")
@@ -12049,6 +12123,7 @@ module.exports.login = async (req, res) => {
             Record: response,
             msg: "Success",
             setting: globalSettings,
+            user_image:data
           });
         } else {
           res.send({
@@ -12056,6 +12131,7 @@ module.exports.login = async (req, res) => {
             Record: response,
             msg: "Invalid Credential",
             setting: globalSettings,
+            user_image:data
           });
         }
       })

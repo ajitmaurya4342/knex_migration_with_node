@@ -12771,9 +12771,10 @@ module.exports.addScore = async (req, res) => {
       .insert(obj)
       .then((response) => {
         if (response.length > 0) {
-          UserArray[0].user_points = updatePoints;
+       
 
           if (checkExamForLevel.length == 0) {
+            UserArray[0].user_points = updatePoints;
             global
               .knexCon("m_user")
               .update({ user_points: updatePoints })

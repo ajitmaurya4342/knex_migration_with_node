@@ -20,6 +20,10 @@ const c = require("config");
 
 global.knexCon = knex;
 
+knex("m_user").then(res=>{
+  console.log(res[0],"m_user")
+})
+
 app.use(bodyParser.json());
 
 require("@/routes/")(app);

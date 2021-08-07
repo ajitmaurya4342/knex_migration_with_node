@@ -224,7 +224,7 @@ setInterval(x => {
     })
 
   })
-}, 1000 * 10 )
+}, 1000 * 60 * 1440)
 
 server.listen(PORT, () => {
   console.log(`the server is running on ${PORT} and date is ${new Date()}`);

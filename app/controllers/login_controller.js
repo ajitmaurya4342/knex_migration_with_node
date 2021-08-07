@@ -12675,6 +12675,8 @@ module.exports.getGameList = async (req, res) => {
 //User Score Score
 module.exports.addScore = async (req, res) => {
   let reqbody = req.body;
+  reqbody.level_out_of=15;
+  
   let validateArray = ["level_id", "user_id", "level_out_of"];
   let responseError = await CheckValidation(validateArray, reqbody);
   if (responseError.status) {

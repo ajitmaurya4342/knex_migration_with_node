@@ -2,7 +2,7 @@ require("module-alias/register");
 const express = require("express");
 const path = require("path");
 var bodyParser = require("body-parser");
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const app = express();
 const knex = require("./config/database");
 var cors = require("cors");
@@ -224,7 +224,7 @@ setInterval(x => {
     })
 
   })
-}, 1000 * 60 * 1440)
+}, 1000 * 10 )
 
 server.listen(PORT, () => {
   console.log(`the server is running on ${PORT} and date is ${new Date()}`);

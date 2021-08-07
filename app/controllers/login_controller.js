@@ -12743,7 +12743,7 @@ module.exports.addScore = async (req, res) => {
       nextLevelId = await global.knexCon("m_level").where({
         level: LevelArray[0].level + 1,
         game_id: LevelArray[0].game_id,
-        level_is_active:1
+        level_is_active:"1"
       });
       if(nextLevelId.length>0){
         nextLevelId = nextLevelId[0].level + "-" + nextLevelId[0].level_id;

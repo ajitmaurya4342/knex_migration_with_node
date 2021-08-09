@@ -12665,7 +12665,6 @@ module.exports.getGameList = async (req, res) => {
           { id: 1, iconName: "surround-sound", description: "Sound" },
           { id: 2, iconName: "rule", description: "Game Rules" },
           // { id: 3, iconName: 'cubes', description: 'Buy More Coins' },
-
           // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
         ],
       });
@@ -13176,8 +13175,10 @@ module.exports.getUserReward = async (req, res) => {
   .knexCon("settings");
   let rewardPoint=settingReward[0].rewardPoint
   let update =await global
-  .knexCon.raw(`update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`)
- return res.json({status:true,message:"You Rewarded 30 Points"})
+  .knexCon.raw(`update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`);
+  let getUserDetail=await global
+  .knexCon("m_user").where({user_id:user_id});
+ return res.json({status:true,message:"You Rewarded 30 Points",user_detail:getUserDetail[0]})
 
 
 }

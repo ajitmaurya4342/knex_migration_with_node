@@ -12651,7 +12651,14 @@ module.exports.getGameList = async (req, res) => {
             amountIcon: "inr",
             point: 3000,
           },
-
+          {
+            id: 5,
+            iconName: "",
+            description: "Free 30 Coins Watch Video",
+            amount: "0",
+            amountIcon: "inr",
+            point: 0,
+          },
           // {id:2, iconName:"speaker-notes", description: "Instruction",Info:},
         ],
         settingData: [
@@ -13170,7 +13177,7 @@ module.exports.getUserReward = async (req, res) => {
   let rewardPoint=settingReward[0].rewardPoint
   let update =await global
   .knexCon.raw(`update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`)
-   return  res.send({status:true,message:"You Rewarded 30 Points"})
+ return res.json({status:true,message:"You Rewarded 30 Points"})
 
 
 }

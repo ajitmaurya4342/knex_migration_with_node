@@ -4,7 +4,7 @@ const pagination = require("@/lib/pagination").pagination;
 var request = require("request");
 // const cheerio = require('cherio')
 
-module.exports.ImageLogoQuestion = async (req, res) => {
+module.exports.ImageLogoQuestion = async (req, res) => {  
   var newArray = [
     {
       question_new:
@@ -13160,3 +13160,17 @@ module.exports.getLevelByGame = async (req, res) => {
     current_user_level: user_level.length > 0 ? user_level[0].level + 1 : 1,
   });
 };
+
+module.exports.getUserReward = async (req, res) => {
+
+
+  let user_id=req.params.user_id;
+  let settingReward=await global
+  .knexCon("settings");
+  let rewardPoint=settingReward[0].rewardPoint
+  let update =await global
+  .knexCon.raw(`update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`)
+   return  res.send({status:true,message:"You Rewarded 30 Points"})
+
+
+}

@@ -45,6 +45,10 @@ router
 router
   .route("/level-list-by-game") //Need SessionID, SeatIDs
   .get(login_controller.getLevelByGame);
+  
+  router
+  .route("/rewardPoint/:user_id") //Need SessionID, SeatIDs
+  .get(login_controller.getUserReward);
 
 /////
 router

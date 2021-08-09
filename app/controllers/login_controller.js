@@ -12613,7 +12613,7 @@ module.exports.getGameList = async (req, res) => {
         msg: "Inserted Succesfully",
         LeaderBoard: arrayNew,
         shareUrl:
-          "https://www.figma.com/file/BVhnYL2qNQyyBRC0RQk39K/MyCinema.world-(Sanath)?node-id=0%3A1",
+          "http://play.google.com/store/apps/details?id=com.quiziqapp",
         instruction: [
           "1. Each Game Need 10 points",
           "2. Clear Level 10 out of 15",

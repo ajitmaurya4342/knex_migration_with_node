@@ -4,7 +4,7 @@ const pagination = require("@/lib/pagination").pagination;
 var request = require("request");
 // const cheerio = require('cherio')
 
-module.exports.ImageLogoQuestion = async (req, res) => {  
+module.exports.ImageLogoQuestion = async (req, res) => {
   var newArray = [
     {
       question_new:
@@ -12029,7 +12029,7 @@ module.exports.ImageLogoQuestion = async (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-  console.log("LOginnnnnnnn")
+  console.log("LOginnnnnnnn");
   let reqbody = req.body;
   let validateArray = ["user_name"];
   let responseError = await CheckValidation(validateArray, reqbody);
@@ -12037,52 +12037,52 @@ module.exports.login = async (req, res) => {
   const data = [
     {
       id: 1,
-      title: 'Math333',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar1.png',
+      title: "Math333",
+      color: "#FFF",
+      image: "https://bootdey.com/img/Content/avatar/avatar1.png",
     },
     {
       id: 2,
-      title: 'X & 0',
-      color: '#87CEEB',
-      image: 'https://bootdey.com/img/Content/avatar/avatar2.png',
+      title: "X & 0",
+      color: "#87CEEB",
+      image: "https://bootdey.com/img/Content/avatar/avatar2.png",
     },
     {
       id: 3,
-      title: 'Logo Quiz',
-      color: '#87CEEB',
-      image: 'https://bootdey.com/img/Content/avatar/avatar3.png',
+      title: "Logo Quiz",
+      color: "#87CEEB",
+      image: "https://bootdey.com/img/Content/avatar/avatar3.png",
     },
     {
       id: 4,
-      title: 'Image Quiz',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar4.png',
+      title: "Image Quiz",
+      color: "#FFF",
+      image: "https://bootdey.com/img/Content/avatar/avatar4.png",
     },
     {
       id: 5,
-      title: 'Full Form Quiz',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar5.png',
+      title: "Full Form Quiz",
+      color: "#FFF",
+      image: "https://bootdey.com/img/Content/avatar/avatar5.png",
     },
     {
       id: 6,
-      title: 'More',
-      color: '#87CEEB',
-      image: 'https://bootdey.com/img/Content/avatar/avatar6.png',
+      title: "More",
+      color: "#87CEEB",
+      image: "https://bootdey.com/img/Content/avatar/avatar6.png",
     },
     {
       id: 1,
-      title: 'Math333',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar7.png',
+      title: "Math333",
+      color: "#FFF",
+      image: "https://bootdey.com/img/Content/avatar/avatar7.png",
     },
     {
       id: 1,
-      title: 'Math333',
-      color: '#FFF',
-      image: 'https://bootdey.com/img/Content/avatar/avatar8.png',
-    }
+      title: "Math333",
+      color: "#FFF",
+      image: "https://bootdey.com/img/Content/avatar/avatar8.png",
+    },
   ];
   if (responseError.status) {
     global
@@ -12100,7 +12100,7 @@ module.exports.login = async (req, res) => {
             Record: response,
             msg: "Success",
             setting: globalSettings,
-            user_image:data
+            user_image: data,
           });
         } else {
           res.send({
@@ -12108,7 +12108,7 @@ module.exports.login = async (req, res) => {
             Record: response,
             msg: "Invalid Credential",
             setting: globalSettings,
-            user_image:data
+            user_image: data,
           });
         }
       })
@@ -12612,11 +12612,16 @@ module.exports.getGameList = async (req, res) => {
         Record: response,
         msg: "Inserted Succesfully",
         LeaderBoard: arrayNew,
-        shareUrl:
-          "http://play.google.com/store/apps/details?id=com.quiziqapp",
+        shareUrl: "http://play.google.com/store/apps/details?id=com.quiziqapp",
         instruction: [
-          "1. Each Game Need 10 points",
-          "2. Clear Level 10 out of 15",
+          "1. Players require 100 points to play a level.",
+          "2. Clear Level 10 out of 15.",
+          "3. To complete a  level, players need  to score 12 out of 15.",
+          "4. On completion of the new level, players will earn  100 points.",
+          "5. On failure of a new level,players will burn 100 points.",
+          "6. As the level begins,if the player attempts to go back or close the app the player will be considered as failure.",
+          "7. Players can buy more coins from settings.",
+          "8. Leaderboard's ranking is based on players correct answers given.",
         ],
         paymentArray: [
           {
@@ -12681,8 +12686,8 @@ module.exports.getGameList = async (req, res) => {
 //User Score Score
 module.exports.addScore = async (req, res) => {
   let reqbody = req.body;
-  reqbody.level_out_of=15;
-  
+  reqbody.level_out_of = 15;
+
   let validateArray = ["level_id", "user_id", "level_out_of"];
   let responseError = await CheckValidation(validateArray, reqbody);
   if (responseError.status) {
@@ -12751,12 +12756,11 @@ module.exports.addScore = async (req, res) => {
       nextLevelId = await global.knexCon("m_level").where({
         level: LevelArray[0].level + 1,
         game_id: LevelArray[0].game_id,
-        level_is_active:"1"
+        level_is_active: "1",
       });
-      if(nextLevelId.length>0){
+      if (nextLevelId.length > 0) {
         nextLevelId = nextLevelId[0].level + "-" + nextLevelId[0].level_id;
       }
-
     }
 
     let percentageCalculate =
@@ -12784,8 +12788,6 @@ module.exports.addScore = async (req, res) => {
       .insert(obj)
       .then((response) => {
         if (response.length > 0) {
-       
-
           if (checkExamForLevel.length == 0) {
             UserArray[0].user_points = updatePoints;
             global
@@ -13168,17 +13170,18 @@ module.exports.getLevelByGame = async (req, res) => {
 };
 
 module.exports.getUserReward = async (req, res) => {
-
-
-  let user_id=req.params.user_id;
-  let settingReward=await global
-  .knexCon("settings");
-  let rewardPoint=settingReward[0].rewardPoint
-  let update =await global
-  .knexCon.raw(`update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`);
-  let getUserDetail=await global
-  .knexCon("m_user").where({user_id:user_id});
- return res.json({status:true,message:"You Rewarded 30 Points",user_detail:getUserDetail[0]})
-
-
-}
+  let user_id = req.params.user_id;
+  let settingReward = await global.knexCon("settings");
+  let rewardPoint = settingReward[0].rewardPoint;
+  let update = await global.knexCon.raw(
+    `update m_user set user_points=user_points+${rewardPoint} where user_id=${user_id}`
+  );
+  let getUserDetail = await global
+    .knexCon("m_user")
+    .where({ user_id: user_id });
+  return res.json({
+    status: true,
+    message: "You Rewarded 30 Points",
+    user_detail: getUserDetail[0],
+  });
+};

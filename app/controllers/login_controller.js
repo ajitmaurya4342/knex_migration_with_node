@@ -12622,6 +12622,7 @@ module.exports.getGameList = async (req, res) => {
           "6. As the level begins,if the player attempts to go back or close the app the player will be considered as failure.",
           "7. Players can buy more coins from settings.",
           "8. Leaderboard's ranking is based on players correct answers given.",
+          "9. All the Best",
         ],
         paymentArray: [
           {

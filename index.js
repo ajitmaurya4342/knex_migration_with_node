@@ -194,7 +194,7 @@ app.get("/uploadDrive", async (req, res) => {
 setInterval(x => {
   // console.log("fsfsd");
 
-  knex.raw("update m_user set user_points=user_points+100").then(res => {
+  knex.raw("update m_user set user_points=user_points+300 where user_points<500").then(res => {
     knex("m_user").then(res => {
 
       res.map(x => {

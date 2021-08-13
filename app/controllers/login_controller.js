@@ -12660,7 +12660,7 @@ module.exports.getGameList = async (req, res) => {
           {
             id: 5,
             iconName: "cubes",
-            description: "Free 30 Coins Watch Video",
+            description: "Free 100 Coins Watch Video",
             amount: "0",
             amountIcon: "inr",
             point: 0,

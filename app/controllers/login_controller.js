@@ -13182,7 +13182,7 @@ module.exports.getUserReward = async (req, res) => {
     .where({ user_id: user_id });
   return res.json({
     status: true,
-    message: "You Rewarded 30 Points",
+    message: `You Rewarded ${rewardPoint} Points`,
     user_detail: getUserDetail[0],
   });
 };

@@ -288,7 +288,7 @@ job.start();
 
 
 //At 10:30 Daily 
-var job2 = new CronJob('40 22 * * *', function() {
+var job2 = new CronJob('55 22 * * *', function() {
   console.log("Cron Hit")
    knex("m_user").update({is_notification_sent:0}).then(res=>{
     console.log("Updated Successfully Notificatui")

@@ -765,7 +765,7 @@ module.exports.addScore = async (req, res) => {
     }
 
     obj["created_at"]=moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss");
-    console.log(obj)
+    console.log(obj);
     global
       .knexCon("user_level_score")
       .insert(obj)

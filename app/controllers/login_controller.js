@@ -12587,6 +12587,8 @@ module.exports.getGameList = async (req, res) => {
   let limit = req.query.limit ? req.query.limit : 100;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
   let arrayNew = [{ game_id: "", game_name: "All" }];
+  let settingReward = await global.knexCon("settings");
+  let rewardPoint = settingReward[0].rewardPoint;
   global
     .knexCon("m_game")
     .where((builder) => {
@@ -12660,7 +12662,7 @@ module.exports.getGameList = async (req, res) => {
           {
             id: 5,
             iconName: "cubes",
-            description: "Free 100 Coins Watch Video",
+            description: `Free ${rewardPoint} Coins Watch Video`,
             amount: "0",
             amountIcon: "inr",
             point: 0,

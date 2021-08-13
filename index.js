@@ -199,7 +199,7 @@ app.get("/uploadDrive", async (req, res) => {
   return  new Promise(async (resolve) =>{
 
    console.log(is_point_plus,message_body,title_new)
-   let notificationDeactive= await  knex("m_user").update({is_notification_sent:0});
+  
    let message=`Play more to earn more and get the best result in leaderboard!`;
    let title="Play & Earn"
     if(message_body){
@@ -266,7 +266,9 @@ app.get("/uploadDrive", async (req, res) => {
 
 //At Every 6 Hour
 var job = new CronJob('0 */6 * * *', function() {
- console.log("Cron Hit")
+  knex("m_user").update({is_notification_sent:0}).then(res=>{
+    console.log("Updated Successfully Notificatui")
+  })
  setIntervalSet=setInterval(x=>{
    
   notificationSend(true).then(res=>{
@@ -286,10 +288,13 @@ job.start();
 
 
 //At 10:30 Daily 
-var job2 = new CronJob('30 22 * * *', function() {
+var job2 = new CronJob('40 22 * * *', function() {
   console.log("Cron Hit")
+   knex("m_user").update({is_notification_sent:0}).then(res=>{
+    console.log("Updated Successfully Notificatui")
+   })
   setIntervalSet_222=setInterval(x=>{
-    
+
    notificationSend(true).then(res=>{
     console.log(res)
      if(res.status){

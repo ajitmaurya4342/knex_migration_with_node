@@ -212,7 +212,7 @@ app.get("/uploadDrive", async (req, res) => {
    if(is_point_plus){
     let updatePoint=await knex.raw(`update m_user set user_points=user_points+300 where user_points<500 `)
    }
-   let noficationSent=await knex("m_user").where({is_notification_sent:0}).limit(20);
+   let noficationSent=await knex("m_user").where({is_notification_sent:0}).limit(30);
    if(noficationSent.length>0){
     async.forEachOf(noficationSent,function(x,index,eachCallback){
 
@@ -286,23 +286,24 @@ job.start();
 
 
 //At 10:30 Daily 
-var job = new CronJob('30 22 * * *', function() {
+var job2 = new CronJob('30 22 * * *', function() {
   console.log("Cron Hit")
   setIntervalSet_222=setInterval(x=>{
     
    notificationSend(true).then(res=>{
+    console.log(res)
      if(res.status){
      console.log("Successful Message Sent")
      }else{
        console.log("Timer Stop")
        clearInterval(setIntervalSet_222);
      }
-    console.log(res)
+   
    })
  
    },20000)
  }, null, true, 'Asia/Kolkata');
- job.start();
+ job2.start();
 
 
 

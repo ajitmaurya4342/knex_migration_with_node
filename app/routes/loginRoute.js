@@ -64,8 +64,8 @@ router
   .route("/transaction_detail_logs") //Need SessionID, SeatIDs
   .post(login_controller.allTransactionDetailLogs);
 /////
-router
-  .route("/ImageLogoQuestion") //Need SessionID, SeatIDs
-  .get(login_controller.ImageLogoQuestion);
+// router
+//   .route("/ImageLogoQuestion") //Need SessionID, SeatIDs
+//   .get(login_controller.ImageLogoQuestion);
 
 module.exports = router;

@@ -9,13 +9,15 @@ var cors = require("cors");
 var async = require("async");
 const readline = require('readline');
 const { google } = require('googleapis');
-
+const moment =require("moment");
+var CronJob = require('cron').CronJob;
 
 var request = require('request');
 app.use(cors());
 
 const http = require("http");
 const c = require("config");
+const { clearInterval } = require("timers");
 
 global.knexCon = knex;
 
@@ -30,7 +32,10 @@ require("@/routes/")(app);
 var tm = [];
 
 var _total = 0;
+var setIntervalSet;
+var setIntervalSet_222;
 const server = http.createServer(app);
+let count=0;
 
 app.get("/uploadDrive", async (req, res) => {
 
@@ -190,41 +195,116 @@ app.get("/uploadDrive", async (req, res) => {
 
 });
 
+ const notificationSend = async (is_point_plus,message_body,title_new) =>{
+  return  new Promise(async (resolve) =>{
 
-setInterval(x => {
-  // console.log("fsfsd");
+   console.log(is_point_plus,message_body,title_new)
+   let notificationDeactive= await  knex("m_user").update({is_notification_sent:0});
+   let message=`Play more to earn more and get the best result in leaderboard!`;
+   let title="Play & Earn"
+    if(message_body){
+      message=message_body;
+    }
+    if(title_new){
+      title=title_new
+    }
+  
+   if(is_point_plus){
+    let updatePoint=await knex.raw(`update m_user set user_points=user_points+300 where user_points<500 `)
+   }
+   let noficationSent=await knex("m_user").where({is_notification_sent:0}).limit(20);
+   if(noficationSent.length>0){
+    async.forEachOf(noficationSent,function(x,index,eachCallback){
 
-  knex.raw("update m_user set user_points=user_points+300 where user_points<500").then(res => {
-    knex("m_user").then(res => {
+      let message_sent= x.user_points<500 && is_point_plus?`${x.user_name}, 300 points has been credited to your account. Enjoy & Keep Playing!`:message;
+      let title_new_show= x.user_points<500 && is_point_plus?`Bonus 300 Point`:title;
 
-      res.map(x => {
-        if (x.token) {
-          var options = {
-            'method': 'POST',
-            'url': 'https://fcm.googleapis.com/fcm/send',
-            'headers': {
-              'Authorization': 'key=AAAAR-bLrp8:APA91bH2SWwdpBiFykrnQIBzMzUEpHEGM5HHWi5sU-mTO2ZkCISv6QPVq-f_O95GRIWvrgYkhRmL2jz-iZe3iKGJ1pA74Jkq_unSmV-gd4NfASe6K3H45zsuRjAHxoQAz6ktrJU9-Zt9',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ "to": x.token, "collapse_key": "type_a", "notification": { "body": `${x.user_name} you earned 100 points`, "title": "Bonus Point" }, "data": { "body": "Body of Your Notification in Data", "title": "Title of Your Notification in Title", "key_1": "Value for key_1", "key_2": "Value for key_2" } })
-          };
+      if (x.token) {
+        var options = {
+          'method': 'POST',
+          'url': 'https://fcm.googleapis.com/fcm/send',
+          'headers': {
+            'Authorization': 'key=AAAAR-bLrp8:APA91bH2SWwdpBiFykrnQIBzMzUEpHEGM5HHWi5sU-mTO2ZkCISv6QPVq-f_O95GRIWvrgYkhRmL2jz-iZe3iKGJ1pA74Jkq_unSmV-gd4NfASe6K3H45zsuRjAHxoQAz6ktrJU9-Zt9',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ "to": x.token, "collapse_key": "type_a", "notification": { "body":message_sent, "title":title_new_show  }, "data": { "body": "Body of Your Notification in Data", "title": "Title of Your Notification in Title", "key_1": "Value for key_1", "key_2": "Value for key_2" } })
+        };
+        request(options, function (error, response) {
+          if (error) {
 
+          }else{
+           knex("m_user").update({is_notification_sent:1}).where({user_id:x.user_id}).then(res33333=>{
+            eachCallback();
+           })
+            
+          }
+       
+        });
 
-
-          request(options, function (error, response) {
-            if (error) throw new Error(error);
-            console.log(response.body);
-          });
-
-        }
-      })
-
-    }).catch(err => {
-
+      }else{
+          knex("m_user").update({is_notification_sent:1}).where({user_id:x.user_id}).then(res33333=>{
+          eachCallback();
+         })
+      }
+    },function(error){
+      if(error){
+        return resolve({status:false})
+      }else{
+        console.log("completed User")
+        return resolve({status:true})
+      }
     })
+     
+   }else{
+    return resolve({status:false})
+   }
 
+ 
   })
-}, 1000 * 60 * 1440)
+ }
+
+
+//At Every 6 Hour
+var job = new CronJob('0 */6 * * *', function() {
+ console.log("Cron Hit")
+ setIntervalSet=setInterval(x=>{
+   
+  notificationSend(true).then(res=>{
+    if(res.status){
+    console.log("Successful Message Sent")
+    }else{
+      console.log("Timer Stop")
+      clearInterval(setIntervalSet);
+    }
+    
+   console.log(res)
+  })
+
+  },20000)
+}, null, true, 'Asia/Kolkata');
+job.start();
+
+
+//At 10:30 Daily 
+var job = new CronJob('30 22 * * *', function() {
+  console.log("Cron Hit")
+  setIntervalSet_222=setInterval(x=>{
+    
+   notificationSend(true).then(res=>{
+     if(res.status){
+     console.log("Successful Message Sent")
+     }else{
+       console.log("Timer Stop")
+       clearInterval(setIntervalSet_222);
+     }
+    console.log(res)
+   })
+ 
+   },20000)
+ }, null, true, 'Asia/Kolkata');
+ job.start();
+
+
 
 server.listen(PORT, () => {
   console.log(`the server is running on ${PORT} and date is ${new Date()}`);

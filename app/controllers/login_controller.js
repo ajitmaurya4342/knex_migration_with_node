@@ -764,7 +764,8 @@ module.exports.addScore = async (req, res) => {
       sendArrayStar = ["star", "star", "star"];
     }
 
-    obj["created_at"]=moment().format("YYYY-MM-DD HH:mm:ss");
+    obj["created_at"]=moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss");
+    console.log(obj)
     global
       .knexCon("user_level_score")
       .insert(obj)

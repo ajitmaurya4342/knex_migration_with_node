@@ -431,7 +431,7 @@ module.exports.getLeaderBoard = async (req, res) => {
   // select SUM(user_level_score.level_score)*10,m_user.user_id,m_user.user_name,m_user.user_image from user_level_score inner join  m_user on m_user.user_id=user_level_score.user_id where score_is_active=1 group by m_user.user_id;
 
   let limit = req.query.limit ? req.query.limit : 200;
-  limit=30;
+  limit=50;
   let currentPage = req.query.currentPage ? req.query.currentPage : 1;
   let Filter = "";
   if (req.query.game_id) {

@@ -63,6 +63,10 @@ router
 router
   .route("/transaction_detail_logs") //Need SessionID, SeatIDs
   .post(login_controller.allTransactionDetailLogs);
+
+  router
+  .route("/dashboard_user") //Need SessionID, SeatIDs
+  .get(login_controller.dashboardApi);
 /////
 // router
 //   .route("/ImageLogoQuestion") //Need SessionID, SeatIDs

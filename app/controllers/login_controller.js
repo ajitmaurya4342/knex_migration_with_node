@@ -1169,3 +1169,40 @@ module.exports.getUserReward = async (req, res) => {
     user_detail: getUserDetail[0],
   });
 };
+
+module.exports.dashboardApi = async (req, res) => {
+
+  let dashboardCount=[{ name:"Highest Level in Image Quiz",totalCount:""},{ name:"Highest Level in Logo Quiz",totalCount:""},{ name:"Highest Level in Maths Quiz",totalCount:""},{name:"Total User in App",totalCount:""}]
+  let ImageQuiz = await global.knexCon.raw(`SELECT MAX(m_level.level) as max_level FROM user_level_score left join m_level on m_level.level_id=user_level_score.level_id where  game_id=2 order by m_level.level_id;`);
+  dashboardCount[0]["totalCount"]=ImageQuiz[0][0].max_level;
+  //Logo Quiz
+  let LogoQuiz = await global.knexCon.raw(`SELECT MAX(m_level.level) as max_level FROM user_level_score left join m_level on m_level.level_id=user_level_score.level_id where  game_id=1 order by m_level.level_id;`);
+  dashboardCount[1]["totalCount"]=LogoQuiz[0][0].max_level;
+  //
+  let MathsQuiz = await global.knexCon.raw(`SELECT MAX(m_level.level) as max_level FROM user_level_score left join m_level on m_level.level_id=user_level_score.level_id where  game_id=3 order by m_level.level_id;`);
+  dashboardCount[2]["totalCount"]=MathsQuiz[0][0].max_level;
+  //
+  let user_count = await global.knexCon.raw(`SELECT Count(*) as total_user FROM m_user`);
+  dashboardCount[3]["totalCount"]=user_count[0][0].total_user;
+
+  let user_with_date = await global.knexCon.raw(`select DATE(created_at) as date_new,count(*) as total_count from m_user group by DATE(created_at)`);
+  // console.log(user_with_date)
+
+
+  user_with_date[0].map(x=>{
+    x.date_new=moment(x.date_new).format("DD  MMMM,YYYY ")
+  })
+
+ 
+      // if (response.length > 0) {
+    return  res.send({
+        status: true,
+        msg: "Inserted Succesfully",
+        dashboardCount,
+        user_with_date:user_with_date[0]
+      });
+
+  
+
+};
+

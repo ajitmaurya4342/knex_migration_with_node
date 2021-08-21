@@ -3,6 +3,7 @@ const CheckValidation = require("@/lib/CheckValidation").checkValidation;
 const pagination = require("@/lib/pagination").pagination;
 var request = require("request");
 const moment =require("moment");
+const notificationSend = require("@/lib/notification").notificationSend;
 // const cheerio = require('cherio')
 
 
@@ -1003,6 +1004,7 @@ module.exports.addEditUser = async (req, res) => {
       user_type: "0",
       uuid: reqbody.uuid,
       user_is_active: "1",
+      created_at: moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss")
     };
     if (reqbody.user_id) {
       global
@@ -1172,7 +1174,7 @@ module.exports.getUserReward = async (req, res) => {
 
 module.exports.dashboardApi = async (req, res) => {
 
-  let dashboardCount=[{ name:"Highest Level in Image Quiz",totalCount:""},{ name:"Highest Level in Logo Quiz",totalCount:""},{ name:"Highest Level in Maths Quiz",totalCount:""},{name:"Total User in App",totalCount:""}]
+  let dashboardCount=[{ name:"Highest Level in Image Quiz",totalCount:""},{ name:"Highest Level in Logo Quiz",totalCount:""},{ name:"Highest Level in Maths Quiz",totalCount:""},{name:"Total User in App",totalCount:""},{name:"Total Level Played",totalCount:""},{name:"Today Level Played",totalCount:""},{name:"Total User Level Played Today",totalCount:""}]
   let ImageQuiz = await global.knexCon.raw(`SELECT MAX(m_level.level) as max_level FROM user_level_score left join m_level on m_level.level_id=user_level_score.level_id where  game_id=2 order by m_level.level_id;`);
   dashboardCount[0]["totalCount"]=ImageQuiz[0][0].max_level;
   //Logo Quiz
@@ -1184,8 +1186,19 @@ module.exports.dashboardApi = async (req, res) => {
   //
   let user_count = await global.knexCon.raw(`SELECT Count(*) as total_user FROM m_user`);
   dashboardCount[3]["totalCount"]=user_count[0][0].total_user;
+  //
+  let total_level_played = await global.knexCon.raw(`SELECT Count(*) as total_level_played FROM user_level_score`);
+  dashboardCount[4]["totalCount"]=total_level_played[0][0].total_level_played;
 
-  let user_with_date = await global.knexCon.raw(`select DATE(created_at) as date_new,count(*) as total_count from m_user group by DATE(created_at)`);
+  let today_level_played = await global.knexCon.raw(`SELECT Count(*) as today_level_played FROM user_level_score where DATE(created_at)='${moment().add(330,"minutes").format("YYYY-MM-DD")}'`);
+  dashboardCount[5]["totalCount"]=today_level_played[0][0].today_level_played;
+
+  let total_user_played_level = await global.knexCon.raw(`SELECT Count(*) as total_user_played_level FROM user_level_score where DATE(created_at)='${moment().add(330,"minutes").format("YYYY-MM-DD")}' group by user_id`);
+  console.log(`SELECT Count(*) as total_user_played_level FROM user_level_score where DATE(created_at)='${moment().add(330,"minutes").format("YYYY-MM-DD")}' group by user_id`)
+  dashboardCount[6]["totalCount"]=total_user_played_level[0].length;
+  let user_with_date = await global.knexCon.raw(`select DATE(created_at) as date_new,count(*) as total_count from m_user group by DATE(created_at) order by  DATE(created_at) DESC limit 30`);
+  
+  
   // console.log(user_with_date)
 
 
@@ -1205,4 +1218,36 @@ module.exports.dashboardApi = async (req, res) => {
   
 
 };
+
+module.exports.notification_send = async (req, res) => {
+let setIntervalSet;
+let reqbody = req.body;
+let validateArray = [
+  "message_title",
+  "message_body",
+];
+
+let responseError = await CheckValidation(validateArray, reqbody);
+if (!responseError.status) {
+  return res.send(responseError)
+}
+ let user_update=await global.knexCon("m_user").update({is_notification_sent:0})
+ setIntervalSet=setInterval(x=>{
+
+  notificationSend(true,reqbody.message_body,reqbody.message_title).then(res=>{
+    if(res.status){
+    console.log("Successful Message Sent")
+    }else{
+      console.log("Timer Stop")
+      clearInterval(setIntervalSet);
+      return res.send({status:true,message:"Notification Sent"})
+    }
+    
+   console.log(res)
+  })
+
+  },15000)
+
+};
+
 

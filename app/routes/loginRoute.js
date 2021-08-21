@@ -67,6 +67,10 @@ router
   router
   .route("/dashboard_user") //Need SessionID, SeatIDs
   .get(login_controller.dashboardApi);
+
+  router
+  .route("/notification_send") //Need SessionID, SeatIDs
+  .post(login_controller.notification_send);
 /////
 // router
 //   .route("/ImageLogoQuestion") //Need SessionID, SeatIDs

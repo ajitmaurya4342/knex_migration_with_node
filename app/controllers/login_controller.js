@@ -577,6 +577,7 @@ module.exports.getGameList = async (req, res) => {
       }
       builder.where({ game_is_active: "1" });
     })
+    .orderBy("is_order","ASC")
     .paginate(pagination(limit, currentPage))
     .then((response) => {
       response.data.map((x) => {
@@ -597,14 +598,13 @@ module.exports.getGameList = async (req, res) => {
         shareUrl: "http://play.google.com/store/apps/details?id=com.quiziqapp",
         instruction: [
           "1. Players require 100 points to play a level.",
-          "2. Clear Level 10 out of 15.",
-          "3. To complete a  level, players need  to score 12 out of 15.",
-          "4. On completion of the new level, players will earn  100 points.",
-          "5. On failure of a new level,players will burn 100 points.",
-          "6. As the level begins,if the player attempts to go back or close the app the player will be considered as failure.",
-          "7. Players can buy more coins from settings.",
-          "8. Leaderboard's ranking is based on players correct answers given.",
-          "9. All the Best",
+          "2. To complete a  level, players need  to score 12 out of 15.",
+          "3. On completion of the new level, players will earn  100 points.",
+          "4. On failure of a new level,players will burn 100 points.",
+          "5. As the level begins,if the player attempts to go back or close the app the player will be considered as failure.",
+          "6. Players can buy more coins from settings.",
+          "7. Leaderboard's ranking is based on players correct answers given.",
+          "8. All the Best",
         ],
         paymentArray: [
           {

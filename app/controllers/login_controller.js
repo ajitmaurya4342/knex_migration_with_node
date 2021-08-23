@@ -576,6 +576,9 @@ module.exports.getGameList = async (req, res) => {
         builder.where({ game_id: req.query.game_id });
       }
       builder.where({ game_is_active: "1" });
+      if (req.query.hasOwnProperty("newVersion")) {
+        builder.orWhere({ game_id:5 });
+      }
     })
     .orderBy("is_order","ASC")
     .paginate(pagination(limit, currentPage))

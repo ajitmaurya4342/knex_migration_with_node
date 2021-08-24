@@ -1007,7 +1007,7 @@ module.exports.addEditUser = async (req, res) => {
       user_type: "0",
       uuid: reqbody.uuid,
       user_is_active: "1",
-      created_at: moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss")
+      
     };
     if (reqbody.user_id) {
       global
@@ -1028,6 +1028,7 @@ module.exports.addEditUser = async (req, res) => {
           });
         });
     } else {
+      
       global
         .knexCon("m_user")
         .where({
@@ -1042,6 +1043,7 @@ module.exports.addEditUser = async (req, res) => {
             });
           } else {
             obj["user_points"] = 500;
+            obj["created_at"] = moment().add(330," minutes").format("YYYY-MM-DD HH:mm:ss");
             global
               .knexCon("m_user")
               .insert(obj)

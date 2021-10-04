@@ -1256,3 +1256,105 @@ if (!responseError.status) {
 };
 
 
+module.exports.recharge_list_api = async (req, res) => {
+
+  let recharge_type_list=await  global.knexCon("recharge_type").where({recharge_type_is_active:"Y"})
+  let pay_type_list=await  global.knexCon("pay_from_app").where({pay_is_active:"Y"})
+  let recharge_history=await  global.knexCon("recharge_history")
+  .select(["recharge_history.*","recharge_type.recharge_type_name","pay_from_app.pay_name","recharge_app.pay_name as recharge_pay_name"])
+  .leftJoin("recharge_type","recharge_type.recharge_type_id","=","recharge_history.recharge_type")
+  .leftJoin("pay_from_app","pay_from_app.pay_id","=","recharge_history.pay_from")
+  .leftJoin("pay_from_app as recharge_app","recharge_app.pay_id","=","recharge_history.recharge_app_id")
+  .orderBy("recharge_history_id","DESC").limit(150)
+      // if (response.length > 0) {
+         recharge_history.map(x=>{
+          x["recharge_pay_name"]=x["recharge_pay_name"]?x["recharge_pay_name"]:"-";
+          x["description"]=x["description"]?x["description"]:"-";
+          x["created_at"]=moment(x.created_at).format("YYYY-MM-DD");
+        })
+    return  res.send({
+        status: true,
+        msg: "Inserted Succesfully",
+        recharge_type_list,
+        pay_type_list,
+        recharge_history
+      });
+
+};
+
+module.exports.addEditRecharge = async (req, res) => {
+  let reqbody = req.body;
+  let validateArray = [
+    "recharge_type",
+    "pay_from",
+    "recharge_amount",
+  ];
+
+  let responseError = await CheckValidation(validateArray, reqbody);
+  if (responseError.status) {
+    let obj = {
+      recharge_app_id: reqbody.recharge_type=='8'?reqbody.recharge_app_id?reqbody.recharge_app_id:null:null,
+      recharge_type: reqbody.recharge_type,
+      pay_from: reqbody.pay_from,
+      recharge_amount: reqbody.recharge_amount,
+      description: reqbody.description,
+      recharge_is_active: reqbody.recharge_is_active,
+      created_at: moment(reqbody.created_at).format("YYYY-MM-DD"),
+    
+    };
+
+    if (reqbody.recharge_history_id) {
+      obj["updated_at"]=moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss");
+      global
+        .knexCon("recharge_history")
+        .update(obj)
+        .where({ recharge_history_id: reqbody.recharge_history_id })
+        .then((response) => {
+          res.send({
+            status: true,
+            Record: obj,
+            msg: "Updated Succesfully",
+          });
+        })
+        .catch((err) => {
+          res.send({
+            status: false,
+            Record: err,
+          });
+        });
+    } else {
+      obj["updated_at"]=moment().add(330,"minutes").format("YYYY-MM-DD HH:mm:ss");
+      global
+        .knexCon("recharge_history")
+        .insert(obj)
+        .then((response) => {
+          if (response.length > 0) {
+            obj["recharge_history_id"] = response[0];
+            res.send({
+              status: true,
+              Record: obj,
+              msg: "Inserted Succesfully",
+            });
+          } else {
+            res.send({
+              status: false,
+              Record: response,
+              msg: "something Went wrong",
+            });
+          }
+        })
+        .catch((err) => {
+          res.send({
+            status: false,
+            Record: err,
+          });
+        });
+    }
+  } else {
+    res.send(responseError);
+  }
+  // console.log("dsfdsf")
+};
+
+
+

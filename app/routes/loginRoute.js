@@ -75,5 +75,18 @@ router
 // router
 //   .route("/ImageLogoQuestion") //Need SessionID, SeatIDs
 //   .get(login_controller.ImageLogoQuestion);
+//Recharge Listening
+
+router
+.route("/recharge_list") //Need SessionID, SeatIDs
+.get(login_controller.recharge_list_api);
+
+
+router
+  .route("/addEditRecharge") //Need SessionID, SeatIDs
+  .post(login_controller.addEditRecharge);
+
+
+
 
 module.exports = router;
